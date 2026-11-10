@@ -6,19 +6,25 @@
 */
 module tb ();
 
-  // Dump the signals to a FST file. You can view it with gtkwave or surfer.
+  // Dump the signals to a VCD file. You can view it with gtkwave.
+  `ifndef NO_VCD
   initial begin
     $dumpfile("tb.fst");
     $dumpvars(0, tb);
     #1;
   end
+  `endif
+
+  // inputs from testbench
+  reg [3:0] btn;
+  reg seginv;
 
   // Wire up the inputs and outputs:
   reg clk;
   reg rst_n;
   reg ena;
-  reg [7:0] ui_in;
-  reg [7:0] uio_in;
+  wire [7:0] ui_in = {3'b000, seginv, btn};
+  wire [7:0] uio_in;
   wire [7:0] uo_out;
   wire [7:0] uio_out;
   wire [7:0] uio_oe;
@@ -27,8 +33,13 @@ module tb ();
   wire VGND = 1'b0;
 `endif
 
-  // Replace tt_um_example with your module name:
-  tt_um_JahirBurciaga_simon user_project (
+  wire [3:0] led = uo_out[3:0];
+  wire speaker = uo_out[4];
+  wire dig1 = uo_out[5];
+  wire dig2 = uo_out[6];
+  wire [6:0] seg = uio_out[6:0] & uio_oe[6:0];
+
+  tt_um_jahirburciaga_simon user_project (
 
       // Include power ports for the Gate Level test:
 `ifdef GL_TEST
