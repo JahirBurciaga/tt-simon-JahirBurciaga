@@ -1,29 +1,28 @@
-cat > ~/tt-simon-JahirBurciaga/info.yaml << 'EOF'
 # Tiny Tapeout project information
 project:
-  title:        "Simon Says memory game"
-  author:       "Jahir Burciaga"
-  discord:      ""
-  description:  "Repite la secuencia de luces y sonidos para ganar"
-  language:     "Verilog"
-  clock_hz:     50000
+  title:        "Simon Says memory game"      # Project title
+  author:       "Jahir Burciaga"      # Your name
+  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
+  description:  "Repeat the sequence of colors and sounds to win the game" # One line description of what your project does
+  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
+  clock_hz:     50000       # Clock frequency in Hz (or 0 if not applicable)
 
   # How many tiles your design occupies? A single tile is about 167x108 uM.
-  tiles: "1x1"
+  tiles: "1x1"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 6x2 or 8x2
 
   # Your top module name must start with "tt_um_". Make it unique by including your github username:
   top_module:  "tt_um_jahirburciaga_simon"
 
-  # List your project's source files here.
+  # List your project's source files here. Source files must be in ./src and you must list each source file separately, one per line:
   source_files:
-    - "project.v"
-    - "simon.v"
-    - "score.v"
-    - "sound_gen.v"
-    - "galois_lfsr.v"
-    - "ring_osc.v"
-    - "inverter.v"
     - "clock_divider_stage.v"
+    - "galois_lfsr.v"
+    - "inverter.v"
+    - "project.v"
+    - "ring_osc.v"
+    - "score.v"
+    - "simon.v"
+    - "sound_gen.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
