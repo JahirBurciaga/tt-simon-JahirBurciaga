@@ -54,8 +54,8 @@ module simon (
   localparam StateNextLevel = 7;
   localparam StateGameOver = 8;
 
-  wire [31:0] lfsr_value;
-  reg [31:0] lfsr_capture;
+  wire [15:0] lfsr_value;
+  reg [15:0] lfsr_capture;
   reg lfsr_rewind;
   reg lfsr_stopped;
   reg [1:0] lfsr_cycles;
@@ -65,7 +65,7 @@ module simon (
   wire [1:0] seq = lfsr_value[1:0];
   reg [3:0] state;
 
-  reg [15:0] tick_counter;
+  reg [7:0] tick_counter;  // reducido: ticks_per_milli siempre es 50
   reg [9:0] millis_counter;
   reg [2:0] tone_sequence_counter;
   reg [9:0] sound_freq;
@@ -151,7 +151,7 @@ module simon (
         lfsr_cycles <= lfsr_cycles - 1;
       end
 
-      if (tick_counter == ticks_per_milli - 1) begin
+      if ({8'd0, tick_counter} == ticks_per_milli - 16'd1) begin
         tick_counter   <= 0;
         millis_counter <= millis_counter + 1;
       end

@@ -1,5 +1,7 @@
 /*
  * Simon Says - basado en tt10-simon-game (Uri Shaked, Apache-2.0)
+ * Version reducida para 1 tile: sin oscilador de anillo interno,
+ * siempre usa el reloj externo de 50 kHz.
  */
 
 `default_nettype none
@@ -11,7 +13,7 @@ module tt_um_jahirburciaga_simon (
     output wire [7:0] uio_out,  // IOs: camino de salida
     output wire [7:0] uio_oe,   // IOs: 1 = salida, 0 = entrada
     input  wire       ena,      // siempre 1 cuando hay energia
-    input  wire       clk,      // reloj
+    input  wire       clk,      // reloj (50 kHz)
     input  wire       rst_n     // reset activo en bajo
 );
 
@@ -20,30 +22,17 @@ module tt_um_jahirburciaga_simon (
   wire [6:0] segments;
   wire [1:0] segment_digits;
   wire       sound;
-  wire       clk_sel = ui_in[7];
-  wire       clk_ring_osc;
-  wire       clk_internal;
-  wire       clk_simon        = clk_sel ? clk_internal : clk;
-  wire       clk_internal_out = clk_sel ? clk_internal : 1'b0;
 
   // 2) Asignar TODAS las salidas (lo que no se use, a 0)
-  assign uo_out  = {clk_internal_out, segment_digits, sound, led};
+  assign uo_out  = {1'b0, segment_digits, sound, led};
   assign uio_out = {1'b0, segments};
   assign uio_oe  = 8'b0111_1111;   // uio[6:0] salidas, uio[7] entrada
 
-  // 3) Instanciar los modulos
-  ring_osc #(
-      .CHAIN_LENGTH(13),
-      .DIVIDER_BITS(13)
-  ) ring_osc (
-      .clk_out    (clk_ring_osc),
-      .clk_out_div(clk_internal)
-  );
-
+  // 3) Instanciar el juego
   simon simon1 (
-      .clk            (clk_simon),
+      .clk            (clk),
       .rst            (!rst_n),               // rst_n es activo en bajo
-      .ticks_per_milli(clk_sel ? 16'd62 : 16'd50),
+      .ticks_per_milli(16'd50),               // 50 kHz -> 50 ciclos por ms
       .btn            (ui_in[3:0]),
       .led            (led),
       .segments       (segments),
@@ -53,6 +42,6 @@ module tt_um_jahirburciaga_simon (
   );
 
   // 4) Entradas sin usar, para evitar warnings
-  wire _unused = &{ena, ui_in[6:5], uio_in, clk_ring_osc, 1'b0};
+  wire _unused = &{ena, ui_in[7:5], uio_in, 1'b0};
 
 endmodule

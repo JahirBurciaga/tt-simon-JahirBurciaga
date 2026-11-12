@@ -5,9 +5,9 @@ module sound_gen (
     input wire [9:0] freq,
     output reg sound
 );
-  reg  [31:0] tick_counter;
-  wire [31:0] ticks_per_second = ticks_per_milli * 1000;
-  wire [31:0] freq32 = {22'b0, freq};
+  reg  [15:0] tick_counter;  // reducido de 32 a 16 bits (max ~26k a 50 kHz)
+    wire [15:0] freq16 = {6'b0, freq};
+  wire [15:0] half_second = (ticks_per_milli * 1000) >> 1;  // 25000 a 50 kHz
 
   always @(posedge clk) begin
     if (rst) begin
@@ -16,10 +16,10 @@ module sound_gen (
     end else if (freq == 0) begin
       sound <= 0;
     end else begin
-      tick_counter <= tick_counter + freq32;
-      if (tick_counter >= (ticks_per_second >> 1)) begin
+      tick_counter <= tick_counter + freq16;
+      if (tick_counter >= half_second) begin
         sound <= !sound;
-        tick_counter <= tick_counter + freq32 - (ticks_per_second >> 1);
+        tick_counter <= tick_counter + freq16 - half_second;
       end
     end
   end

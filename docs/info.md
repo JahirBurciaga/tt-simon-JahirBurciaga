@@ -12,14 +12,14 @@ Tested first on a Basys 3 FPGA as a university project (UACJ, VLSI).
 
 ## Clock settings
 
-The `clk_sel` input selects the clock source:
-- `0`: external 50 kHz clock on the `clk` input.
-- `1`: internal clock from a 13-stage ring oscillator divided by 8192 (~62.5 kHz).
-  In this mode the internal clock is also output on `uo_out[7]` for debugging.
+The design always uses the external 50 kHz clock on the `clk` input.
+To fit in a single tile, the internal ring oscillator and the `clk_sel` input
+from the original design were removed, the LFSR was reduced to 16 bits and the
+internal counters were resized.
 
 ## How to test
 
-1. Provide a 50 kHz clock with `clk_sel` = 0.
+1. Provide a 50 kHz clock on `clk`.
 2. Set `seginv`: high for a common anode display, low for common cathode.
 3. Reset the design (pull `rst_n` low, then high).
 4. Press any button to start, then repeat the sequence shown by the LEDs.
