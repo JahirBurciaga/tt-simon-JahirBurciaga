@@ -8,7 +8,7 @@ Juego de memoria **Simon Says** diseñado en Verilog, probado en una FPGA Basys 
 - **Módulo superior:** `tt_um_jahirburciaga_simon`
 - **Área:** 1 tile (≈160 × 110 µm)
 - **Reloj:** 50 kHz externo
-- **Autor:** Jahir Burciaga — Diseño de Sistemas Digitales VLSI, UACJ
+- **Autor:** Jahir Burciaga, Elena Ochoa, Vivian Higareda — Diseño de Sistemas Digitales VLSI, UACJ
 - **Basado en:** [tt10-simon-game](https://github.com/urish/tt10-simon-game) de Uri Shaked (Apache-2.0)
 - **Hoja de datos (inglés):** [docs/info.md](docs/info.md)
 
