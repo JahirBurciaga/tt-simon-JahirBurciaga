@@ -1,47 +1,50 @@
-# Sample testbench for a Tiny Tapeout project
+# Pruebas del Simon Says (cocotb)
 
-This is a sample testbench for a Tiny Tapeout project. It uses [cocotb](https://docs.cocotb.org/en/stable/) to drive the DUT and check the outputs.
-See below to get started or for more information, check the [website](https://tinytapeout.com/hdl/testing/).
+Banco de pruebas en [cocotb](https://www.cocotb.org/) para `tt_um_jahirburciaga_simon`.
 
-## Setting up
+- `tb.v`: testbench en Verilog. Instancia el chip y expone señales con nombre (`btn`, `seginv`, `led`, `seg`, `dig1`, `dig2`) para que las pruebas sean fáciles de leer.
+- `test.py`: las pruebas. La clase `SimonDriver` presiona botones, lee qué LED está encendido y decodifica el display de 7 segmentos.
+- `Makefile`: lista de archivos (`PROJECT_SOURCES`) y configuración del simulador.
 
-1. Edit [Makefile](Makefile) and modify `PROJECT_SOURCES` to point to your Verilog files.
-2. Edit [tb.v](tb.v) and replace `tt_um_example` with your module name.
+## Instalación (una sola vez)
 
-## How to run
-
-To run the RTL simulation:
+En Linux o WSL2 (Ubuntu), desde la raíz del repositorio:
 
 ```sh
+sudo apt install -y iverilog python3-venv
+python3 -m venv venv
+source venv/bin/activate
+pip install -r test/requirements.txt
+```
+
+## Correr las pruebas
+
+```sh
+source venv/bin/activate   # en cada terminal nueva
+cd test
 make -B
 ```
 
-To run gatelevel simulation, first harden your project and copy `../runs/wokwi/results/final/verilog/gl/{your_module_name}.v` to `gate_level_netlist.v`.
+| Prueba | Qué verifica | Duración simulada |
+|---|---|---|
+| `test_simon` | Reset, display vacío, primer LED de la secuencia y puntaje "01" | ≈ 1.2 s |
+| `test_long_game_sequence` | 5 rondas: lee la secuencia de LEDs, presiona los botones y revisa el puntaje | ≈ 18 s |
+| `test_pseudo_randomness` | Distribución de colores en muchos reinicios (desactivada por defecto) | varios minutos |
 
-Then run:
+Correr una sola prueba: `make -B COCOTB_TESTCASE=test_simon`.
+
+Más rondas en la prueba larga: `make -B GAME_SEQUENCE_TEST_LENGTH=10`.
+
+## Ver las formas de onda
+
+La simulación guarda `tb.fst`. Ábrelo con [Surfer](https://surfer-project.org/) o con `gtkwave tb.fst`.
+Señales útiles: `clk`, `rst_n`, `btn`, `led`, `seg`, `dig1`, `dig2` y `speaker` (bocina).
+
+## Simulación gate-level
+
+Para simular el netlist ya sintetizado, descarga el artifact de la Action `gds`, copia el netlist del diseño como
+`gate_level_netlist.v` en esta carpeta y corre:
 
 ```sh
 make -B GATES=yes
-```
-
-If you wish to save the waveform in VCD format instead of FST format, edit tb.v to use `$dumpfile("tb.vcd");` and then run:
-
-```sh
-make -B FST=
-```
-
-This will generate `tb.vcd` instead of `tb.fst`.
-
-## How to view the waveform file
-
-Using GTKWave
-
-```sh
-gtkwave tb.fst tb.gtkw
-```
-
-Using Surfer
-
-```sh
-surfer tb.fst
 ```
